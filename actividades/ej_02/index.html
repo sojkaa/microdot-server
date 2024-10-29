@@ -3,22 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Actividad #</title>
+    <title>Actividad 2: Control de LEDs</title>
     <link rel="stylesheet" href="styles/base.css">
 </head>
 <body>
     <header>
-        <h1>Actividad #</h1>
+        <h1>Control de LEDs con Microdot</h1>
+        <h2>Actividad 2</h2>
     </header>
     <main>
+        <section>
+            <h2>Control Individual de LEDs</h2>
+            <button onclick="toggleLED(1)">LED 1</button>
+            <button onclick="toggleLED(2)">LED 2</button>
+            <button onclick="toggleLED(3)">LED 3</button>
+        </section>
+        <section>
+            <h2>Control de Tira LED RGB</h2>
+            <input type="color" id="colorPicker" onchange="setStripColor(this.value)">
+        </section>
     </main>
     <footer>
-        <p>Representación Frontal y Visual de Datos</p>
-        <p>Computadoras de Aeronaves</p>
-        <p>Alumno XX</p>
+        <p>Materia y Módulo: Representación Frontal y Visual de Datos, Computadoras de Aeronaves</p>
+        <p>Actividad Número 2 de Microdot</p>
+        <p>Alumno: Santiago Sojka</p>  
         <p>Prof. Carlassara Fabrizio</p>
         <p id="fecha"></p>
     </footer>
     <script src="scripts/base.js"></script>
+    <script>
+        let ledStates = [false, false, false];
+
+        function toggleLED(ledNum) {
+            ledStates[ledNum-1] = !ledStates[ledNum-1];
+            fetch(`/led?led=${ledNum}&state=${ledStates[ledNum-1]}`)
+                .then(response => response.text())
+                .then(data => console.log(data));
+        }
+
+        function setStripColor(color) {
+            const rgb = hexToRgb(color);
+            fetch(`/color?r=${rgb.r}&g=${rgb.g}&b=${rgb.b}`)
+                .then(response => response.text())
+                .then(data => console.log(data));
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        // Agregar la fecha al footer
+        const fechaElement = document.getElementById('fecha');
+        const fechaActual = new Date();
+        fechaElement.textContent = fechaActual.toLocaleDateString();
+
+
+    </script>
 </body>
 </html>
